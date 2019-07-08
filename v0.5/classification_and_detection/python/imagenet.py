@@ -61,7 +61,7 @@ class Imagenet(dataset.Dataset):
                     # cache a preprocessed version of the image
                     # TODO: make this multi threaded ?
                     with Image.open(src) as img_org:
-                        processed = self.pre_process(img_org, need_transpose=self.need_transpose, dims=self.image_size)
+                        processed = self.pre_process(img_org, need_transpose=self.need_transpose, dims=self.image_size, src=src)
                         np.save(dst, processed)
 
                 self.image_list.append(image_name)

@@ -181,7 +181,8 @@ def resize_with_aspectratio(img, out_height, out_width, scale=87.5):
 
 
 
-def pre_process_vgg(img, dims=None, need_transpose=False):
+
+def pre_process_vgg(img, dims=None, need_transpose=False, src=None):
     if img.mode != 'RGB':
         img = img.convert('RGB')
 
@@ -194,10 +195,27 @@ def pre_process_vgg(img, dims=None, need_transpose=False):
     # normalize image
     means = np.array([123.68, 116.78, 103.94], dtype=np.float32)
     img -= means
+    imgb = img
+
+    #from models.official.resnet.imagenet_preprocessing import preprocess_image
+    from imagenet_preprocessing import preprocess_image
+    import tensorflow as tf
+    tf.enable_eager_execution()
+    with open(src, 'rb') as f:
+      img_tensor = preprocess_image(
+          f.read(),
+          bbox=None,
+          output_height=output_height,
+          output_width=output_width,
+          num_channels=3,
+          is_training=False,
+          )
+    img = img_tensor.numpy()
+
     # transpose if needed
     if need_transpose:
         img = img.transpose([2, 0, 1])
-    return img
+    return imgb
 
 
 def pre_process_mobilenet(img, dims=None, need_transpose=False):
