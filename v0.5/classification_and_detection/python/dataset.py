@@ -152,6 +152,7 @@ def center_crop(img, out_height, out_width):
 
 
 def resize_with_aspectratio(img, out_height, out_width, scale=87.5):
+    orig_img = img
     width, height = img.size
     new_height = int(100. * out_height / scale)
     new_width = int(100. * out_width / scale)
@@ -162,7 +163,22 @@ def resize_with_aspectratio(img, out_height, out_width, scale=87.5):
         h = new_height
         w = int(out_width * height / new_height)
     img = img.resize((w, h), Image.BILINEAR)
-    return img
+    #return img
+
+    #import ipdb;ipdb.set_trace()
+    import PIL
+    import tensorflow as tf
+    tf.enable_eager_execution()
+    img_tensor = tf.identity(np.array(orig_img))
+    img_tensor = tf.compat.v1.image.resize(
+        img_tensor,
+        [h, w],
+        method=tf.image.ResizeMethod.BILINEAR,
+        align_corners=False,
+        )
+    img_npy = np.uint8(img_tensor.numpy())
+    return PIL.Image.fromarray(img_npy)
+
 
 
 def pre_process_vgg(img, dims=None, need_transpose=False):
