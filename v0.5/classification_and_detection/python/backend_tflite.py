@@ -31,9 +31,9 @@ class BackendTflite(backend.Backend):
         return "NHWC"
 
     def load(self, model_path, inputs=None, outputs=None):
-        with open(model_path, 'rb') as f:
-            self.quantizer = calibrator.Calibrator(f.read())
-        self.sess = interpreter_wrapper.Interpreter(model_path=model_path)
+        tflite_model = open(model_path, 'rb').read()
+        self.quantizer = calibrator.Calibrator(tflite_model)
+        self.sess = interpreter_wrapper.Interpreter(model_content=tflite_model)
         self.sess.allocate_tensors()
         # keep input/output name to index mapping
         self.input2index = {i["name"]: i["index"] for i in self.sess.get_input_details()}
