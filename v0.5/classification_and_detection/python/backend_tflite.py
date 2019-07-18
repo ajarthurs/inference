@@ -9,7 +9,7 @@ from threading import Lock
 import tensorflow as tf
 from tensorflow.lite.python import interpreter as interpreter_wrapper
 from tensorflow.lite.python.optimize import calibrator
-from tensorflow.python.framework.dtypes import qint8 # quantized signed 8-bit integer
+from tensorflow.python.framework.dtypes import int8
 
 import backend
 
@@ -54,11 +54,12 @@ class BackendTflite(backend.Backend):
 
         self.lock.acquire()
         # generate quantized model
+        import ipdb;ipdb.set_trace()
         self.quantized_model = self.quantizer.calibrate_and_quantize(
             _input_gen,
             allow_float=False,
-            input_type=qint8,
-            output_type=qint8,
+            input_type=int8,
+            output_type=int8,
         )
         # set inputs
         for k, v in self.input2index.items():
