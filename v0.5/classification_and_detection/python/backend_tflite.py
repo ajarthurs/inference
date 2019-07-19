@@ -54,7 +54,6 @@ class BackendTflite(backend.Backend):
 
         self.lock.acquire()
         # generate quantized model
-        import ipdb;ipdb.set_trace()
         self.quantized_model = self.quantizer.calibrate_and_quantize(
             _input_gen,
             allow_float=False,
